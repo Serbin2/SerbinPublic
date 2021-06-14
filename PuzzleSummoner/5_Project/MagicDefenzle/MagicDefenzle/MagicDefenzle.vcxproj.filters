@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="DrawPart">
+      <UniqueIdentifier>{724a0ea2-0383-4439-9326-67ccbcb94811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{d4fa13fa-4fb0-46a4-af04-40c9ca4fc947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="TimePart">
+      <UniqueIdentifier>{309fcf89-4c1d-45be-8660-f4d650c73b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePart">
+      <UniqueIdentifier>{e78e901b-1fae-42cf-87f2-9b34049feec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputPart">
+      <UniqueIdentifier>{ba8d88a8-d64c-46cd-91a6-cb1f1cbc9076}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MenuPart">
+      <UniqueIdentifier>{1073de32-c3f1-456a-9fce-3f02a8d9c90c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoundPart">
+      <UniqueIdentifier>{01aec44a-8d24-4f00-82ea-9dac863da417}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkPart">
+      <UniqueIdentifier>{c10d091b-ff4a-4fa2-846f-ec5c0e94dc95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Loger">
+      <UniqueIdentifier>{b515095e-e023-47ff-b9fe-064c69918ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataPart">
+      <UniqueIdentifier>{7f56f7b0-8339-46de-877e-676102d5f378}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicEngine.c">
+      <Filter>DrawPart</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeControler.c">
+      <Filter>TimePart</Filter>
+    </ClCompile>
+    <ClCompile Include="MDmain.c">
+      <Filter>GamePart</Filter>
+    </ClCompile>
+    <ClCompile Include="InputControler.c">
+      <Filter>InputPart</Filter>
+    </ClCompile>
+    <ClCompile Include="dataStruct.c">
+      <Filter>DataPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.c">
+      <Filter>MenuPart</Filter>
+    </ClCompile>
+    <ClCompile Include="NetDef.c">
+      <Filter>NetworkPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.c">
+      <Filter>NetworkPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.c">
+      <Filter>Loger</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.c">
+      <Filter>SoundPart</Filter>
+    </ClCompile>
+    <ClCompile Include="SnL.c">
+      <Filter>DataPart</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraphicEngine.h">
+      <Filter>DrawPart</Filter>
+    </ClInclude>
+    <ClInclude Include="zzDefiner.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeControler.h">
+      <Filter>TimePart</Filter>
+    </ClInclude>
+    <ClInclude Include="MDmain.h">
+      <Filter>GamePart</Filter>
+    </ClInclude>
+    <ClInclude Include="InputControler.h">
+      <Filter>InputPart</Filter>
+    </ClInclude>
+    <ClInclude Include="dataStruct.h">
+      <Filter>DataPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Title.h">
+      <Filter>MenuPart</Filter>
+    </ClInclude>
+    <ClInclude Include="NetDef.h">
+      <Filter>NetworkPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>NetworkPart</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Loger</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>SoundPart</Filter>
+    </ClInclude>
+    <ClInclude Include="SnL.h">
+      <Filter>DataPart</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Note.txt">
+      <Filter>Documents</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>
