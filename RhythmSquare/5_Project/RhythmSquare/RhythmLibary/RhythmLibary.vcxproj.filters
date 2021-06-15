@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bfb8b7a8-bcef-4ad5-9655-c1e7d8dc55f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{a6fde49d-f588-4b35-b8df-ee82135b688c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{27d91995-e34b-4604-b7d6-452e89cce4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{92fba58a-b527-454e-8ea4-6eac4e0df5d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Global">
+      <UniqueIdentifier>{0a612ee2-40b7-4676-9689-edeaac132782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{70e6f44e-8960-4941-8e75-3ef349aff375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Math">
+      <UniqueIdentifier>{e68029dd-f907-4b56-96c3-614ab4fa6fcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Time">
+      <UniqueIdentifier>{ef37e49d-6f90-4369-b11a-c2534892a68c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\D2DGraphics">
+      <UniqueIdentifier>{3401edd7-1b2e-4ea1-a8a6-591ad4e95db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\D2DImage">
+      <UniqueIdentifier>{21504d71-ac53-41ec-b8b3-30cad71906ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Etc">
+      <UniqueIdentifier>{93927808-9c21-4a9a-9afe-f4b37bec9498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{235438ca-1e2d-401c-b299-146e54b8656d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{15e7e988-4ded-426e-a4d3-f985ef7c8808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Transform">
+      <UniqueIdentifier>{1fdb29cd-3ec8-488b-87e8-f604d541ac9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Figure">
+      <UniqueIdentifier>{45d61d8d-ec57-4150-ac8c-6ada29b3e212}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Util\Timer.h">
+      <Filter>Util\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\TimeUtil.h">
+      <Filter>Util\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Figure\CircleVector.h">
+      <Filter>Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="Figure\LineVector.h">
+      <Filter>Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="Figure\RectVector.h">
+      <Filter>Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="Figure\TriangleVector.h">
+      <Filter>Figure</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Utility.h">
+      <Filter>Util\Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Singleton.h">
+      <Filter>Util\Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Key\Key.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Key\KeyDef.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\D2DGraphics.h">
+      <Filter>Graphics\D2DGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\D2DMacros.h">
+      <Filter>Graphics\D2DGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\ImageFactory.h">
+      <Filter>Graphics\D2DGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\D2DImage.h">
+      <Filter>Graphics\D2DImage</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Matrix2x3.h">
+      <Filter>Util\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Vector2.h">
+      <Filter>Util\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform\Transform.h">
+      <Filter>Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioComponent.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\RSAudio.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\SoundEvent.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Frame.h">
+      <Filter>Util\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="pchLib.h">
+      <Filter>Common\Global</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RhythmLibary.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Timer.cpp">
+      <Filter>Util\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\TimeUtil.cpp">
+      <Filter>Util\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Figure\CircleVector.cpp">
+      <Filter>Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="Figure\LineVector.cpp">
+      <Filter>Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="Figure\RectVector.cpp">
+      <Filter>Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="Figure\TriangleVector.cpp">
+      <Filter>Figure</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Utility.cpp">
+      <Filter>Util\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Key\Key.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\D2DGraphics.cpp">
+      <Filter>Graphics\D2DGraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\ImageFactory.cpp">
+      <Filter>Graphics\D2DGraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\D2DImage.cpp">
+      <Filter>Graphics\D2DImage</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Matrix2x3.cpp">
+      <Filter>Util\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Vector2.cpp">
+      <Filter>Util\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform\Transform.cpp">
+      <Filter>Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioComponent.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\RSAudio.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\SoundEvent.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Frame.cpp">
+      <Filter>Util\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="pchLib.cpp">
+      <Filter>Common\Global</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

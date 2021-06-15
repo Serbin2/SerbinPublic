@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{5e793406-c529-45b9-9026-f0d4af5953d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{d4c84a40-be97-4c22-8ab1-56d77626acd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Main">
+      <UniqueIdentifier>{2c93e34c-b85d-4e42-9b60-fbd4a7ab9811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameProcess">
+      <UniqueIdentifier>{c26dd93e-b012-489e-92a8-1b3844e28f71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Note">
+      <UniqueIdentifier>{c7d8b4fb-b3e7-4bde-bc05-75e50158da77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{d093740f-1088-4706-b9f9-bab25ab61731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{882e365c-91e2-4489-9bd9-873aa1b42d28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1">
+      <UniqueIdentifier>{128142b8-6a51-48d0-9d5e-393428a4349e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1\Scene">
+      <UniqueIdentifier>{db7ed869-f044-4699-8548-ae71f4079e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1\Scene\Child">
+      <UniqueIdentifier>{450865eb-611f-4eb2-be8a-e8a7bd32ef76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1\Scene\Main">
+      <UniqueIdentifier>{5123b5b9-1ac0-443d-be0c-f8f50ff525ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1\Cursor">
+      <UniqueIdentifier>{b63bf6d8-52ea-41d3-aa70-d91388ad077c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer1\Button">
+      <UniqueIdentifier>{e64cf09f-77b9-4359-8d6f-29dd8f962671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2">
+      <UniqueIdentifier>{c9a9c163-3a13-4119-a2d6-564231ca0105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer3">
+      <UniqueIdentifier>{a5ed66c6-f20e-4f34-bfad-0c3f95f4baa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer4">
+      <UniqueIdentifier>{ef15cda3-9151-4230-a774-5764c27dcb46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2\Monster">
+      <UniqueIdentifier>{1fe7b65b-eb30-4896-a0b1-b54699a95792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2\Player">
+      <UniqueIdentifier>{4b08e16b-6686-4971-9e9a-aa6dec6cdd84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{56f9c3ec-465b-445e-b7cc-e325fb032544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{caea000b-881b-4822-8271-2d9ac355a1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2\Note">
+      <UniqueIdentifier>{b1b6ddeb-6fbb-4ba1-9291-47737f4e609f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{104c89de-0561-4d92-b46e-12f02142d4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameManager">
+      <UniqueIdentifier>{6b700a5d-7abf-463e-a335-d646f9624d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2\MagicSquare">
+      <UniqueIdentifier>{7e27c282-64b2-4bf3-9a2f-b7b92ae5e1de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Layer2\FX">
+      <UniqueIdentifier>{20ee3390-7249-44f7-8b69-8a5de0cf0278}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Button.h">
+      <Filter>Object\Layer1\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpace\IRenderable.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProcess\GameProcess.h">
+      <Filter>GameProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Cursor.h">
+      <Filter>Object\Layer1\Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\Player.h">
+      <Filter>Object\Layer2\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>Object\Layer1\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>Object\Layer1\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Object1.h">
+      <Filter>Object\Layer1</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpace\IEventable.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ChildScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\MainScene.h">
+      <Filter>Object\Layer1\Scene\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Object2.h">
+      <Filter>Object\Layer2</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Object3.h">
+      <Filter>Object\Layer3</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Object4.h">
+      <Filter>Object\Layer4</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpace\IFastEvent.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpace\IAnimatable.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\ResourceManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Event\EventManager.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\ObjectDef.h" />
+    <ClInclude Include="Scene\MusicSelectScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="RSPage.h">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClInclude>
+    <ClInclude Include="RSSheet.h">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClInclude>
+    <ClInclude Include="RSQNote.h">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClInclude>
+    <ClInclude Include="dbg_memory.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\OptionScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager\GameManager.h">
+      <Filter>GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DefineData.h" />
+    <ClInclude Include="Scene\PauseScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\UI_SIZE_Def.h" />
+    <ClInclude Include="Scene\InGameScene.h">
+      <Filter>Object\Layer1\Scene\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIO.h" />
+    <ClInclude Include="AudioManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="pchApp.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster\Monster.h">
+      <Filter>Object\Layer2\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\MagicCircle.h">
+      <Filter>Object\Layer2\MagicSquare</Filter>
+    </ClInclude>
+    <ClInclude Include="FXManager.h">
+      <Filter>Object\Layer2\FX</Filter>
+    </ClInclude>
+    <ClInclude Include="CFX.h">
+      <Filter>Object\Layer2\FX</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ClearScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\LoseScene.h">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>App\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Button.cpp">
+      <Filter>Object\Layer1\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProcess\GameProcess.cpp">
+      <Filter>GameProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Cursor.cpp">
+      <Filter>Object\Layer1\Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\Player.cpp">
+      <Filter>Object\Layer2\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>Object\Layer1\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneManager.cpp">
+      <Filter>Object\Layer1\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Object1.cpp">
+      <Filter>Object\Layer1</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ChildScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\MainScene.cpp">
+      <Filter>Object\Layer1\Scene\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Object2.cpp">
+      <Filter>Object\Layer2</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Object3.cpp">
+      <Filter>Object\Layer3</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Object4.cpp">
+      <Filter>Object\Layer4</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\ResourceManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Event\EventManager.cpp">
+      <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\MusicSelectScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+    <ClCompile Include="RSPage.cpp">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClCompile>
+    <ClCompile Include="RSSheet.cpp">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClCompile>
+    <ClCompile Include="RSQNote.cpp">
+      <Filter>Object\Layer2\Note</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\OptionScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+    <ClCompile Include="dbg_memory.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <Filter>GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PauseScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\EasyMonsterSet.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\InGameScene.cpp">
+      <Filter>Object\Layer1\Scene\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="pchApp.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster\Monster.cpp">
+      <Filter>Object\Layer2\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\MagicCircle.cpp">
+      <Filter>Object\Layer2\MagicSquare</Filter>
+    </ClCompile>
+    <ClCompile Include="FXManager.cpp">
+      <Filter>Object\Layer2\FX</Filter>
+    </ClCompile>
+    <ClCompile Include="CFX.cpp">
+      <Filter>Object\Layer2\FX</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ClearScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\LoseScene.cpp">
+      <Filter>Object\Layer1\Scene\Child</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RhythmSquare.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="RhythmSquare.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="2020.03.03 ~ 03.08.txt">
+      <Filter>Common\Note</Filter>
+    </Text>
+    <Text Include="Object.txt">
+      <Filter>Object</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Data\sheet\Lokan_introspect_Easy.bin">
+      <Filter>Common\Note</Filter>
+    </None>
+  </ItemGroup>
+</Project>

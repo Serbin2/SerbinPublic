@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{7d2cd1da-f9f6-431e-9592-3cf2609e5b6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GameObj">
+      <UniqueIdentifier>{01ec3ec4-f5c8-4856-8941-c05711ed3c0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Vector2">
+      <UniqueIdentifier>{b988fe62-1942-4e7f-8a65-f39d47a2bf1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Collision">
+      <UniqueIdentifier>{2957607a-daaf-45a1-bdc1-1bea68cecdaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Matrix">
+      <UniqueIdentifier>{b225025d-448a-4e3c-8b57-9766564891bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Audio">
+      <UniqueIdentifier>{92932b95-e501-4de6-9665-d602f0ac3453}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RimEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="REMacro.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Engine\Vector2</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleCollision.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollision.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix32.h">
+      <Filter>Engine\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="RSAudio.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEvent.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioComponent.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RimEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>Engine\Vector2</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollision.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleCollision.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix32.cpp">
+      <Filter>Engine\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="RSAudio.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEvent.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioComponent.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

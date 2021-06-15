@@ -1,0 +1,5 @@
+http://manbow.nothing.sh/event/event.cgi?action=More_def&num=211&event=127
+
+ogg버전으로 다운로드.
+
+ubmsc 혹은 ibmsc 같은 프로그램으로 bms, bme 파일을 여시면 됩니다.

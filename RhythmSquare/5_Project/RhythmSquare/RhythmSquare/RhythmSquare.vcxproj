@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{B876EC96-DD5E-4D29-B780-56AADEA7FCA1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>RhythmSquare</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pchApp.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="CFX.h" />
+    <ClInclude Include="dbg_memory.h" />
+    <ClInclude Include="DefineData.h" />
+    <ClInclude Include="Event\EventManager.h" />
+    <ClInclude Include="FileIO.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="FXManager.h" />
+    <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="GameProcess\GameProcess.h" />
+    <ClInclude Include="Input\Button.h" />
+    <ClInclude Include="Input\Cursor.h" />
+    <ClInclude Include="Interpace\IAnimatable.h" />
+    <ClInclude Include="Interpace\IEventable.h" />
+    <ClInclude Include="Interpace\IFastEvent.h" />
+    <ClInclude Include="Interpace\IRenderable.h" />
+    <ClInclude Include="Monster\Monster.h" />
+    <ClInclude Include="Object\MagicCircle.h" />
+    <ClInclude Include="Object\Object1.h" />
+    <ClInclude Include="Object\Object2.h" />
+    <ClInclude Include="Object\Object3.h" />
+    <ClInclude Include="Object\Object4.h" />
+    <ClInclude Include="Object\ObjectDef.h" />
+    <ClInclude Include="Object\UI_SIZE_Def.h" />
+    <ClInclude Include="pchApp.h" />
+    <ClInclude Include="Player\Player.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Resource\ResourceManager.h" />
+    <ClInclude Include="RSQNote.h" />
+    <ClInclude Include="RSPage.h" />
+    <ClInclude Include="RSSheet.h" />
+    <ClInclude Include="Scene\ChildScene.h" />
+    <ClInclude Include="Scene\ClearScene.h" />
+    <ClInclude Include="Scene\InGameScene.h" />
+    <ClInclude Include="Scene\LoseScene.h" />
+    <ClInclude Include="Scene\MainScene.h" />
+    <ClInclude Include="Scene\MusicSelectScene.h" />
+    <ClInclude Include="Scene\OptionScene.h" />
+    <ClInclude Include="Scene\PauseScene.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="CFX.cpp" />
+    <ClCompile Include="dbg_memory.cpp" />
+    <ClCompile Include="Event\EventManager.cpp" />
+    <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="FXManager.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="GameProcess\GameProcess.cpp" />
+    <ClCompile Include="Input\Button.cpp" />
+    <ClCompile Include="Input\Cursor.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Monster\Monster.cpp" />
+    <ClCompile Include="Object\MagicCircle.cpp" />
+    <ClCompile Include="Object\Object1.cpp" />
+    <ClCompile Include="Object\Object2.cpp" />
+    <ClCompile Include="Object\Object3.cpp" />
+    <ClCompile Include="Object\Object4.cpp" />
+    <ClCompile Include="pchApp.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Player\Player.cpp" />
+    <ClCompile Include="Resource\EasyMonsterSet.cpp" />
+    <ClCompile Include="Resource\ResourceManager.cpp" />
+    <ClCompile Include="RSQNote.cpp" />
+    <ClCompile Include="RSPage.cpp" />
+    <ClCompile Include="RSSheet.cpp" />
+    <ClCompile Include="Scene\ChildScene.cpp" />
+    <ClCompile Include="Scene\ClearScene.cpp" />
+    <ClCompile Include="Scene\InGameScene.cpp" />
+    <ClCompile Include="Scene\LoseScene.cpp" />
+    <ClCompile Include="Scene\MainScene.cpp" />
+    <ClCompile Include="Scene\MusicSelectScene.cpp" />
+    <ClCompile Include="Scene\OptionScene.cpp" />
+    <ClCompile Include="Scene\PauseScene.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RhythmSquare.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="RhythmSquare.ico" />
+    <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="2020.03.03 ~ 03.08.txt" />
+    <Text Include="Object.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Data\sheet\Lokan_introspect_Easy.bin" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
