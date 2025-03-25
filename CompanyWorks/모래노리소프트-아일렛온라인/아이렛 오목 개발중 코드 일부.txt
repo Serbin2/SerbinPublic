@@ -1,0 +1,1095 @@
+/*
+	아일렛 온라인
+	오목 컨텐츠 개발당시 작업 도중의 코드 일부입니다
+*/
+
+
+CProductOmokServer::CProductOmokServer()
+:	m_btGameState		( OMOK_STATE_WAIT ),
+	m_dwLimitTime		( 0 ),
+	m_dwElapsedTime		( 0 ),
+	m_btElapsedTurn		( 0 ),
+	m_bShowLastMove		( FALSE ),
+	m_bAIPlay			( FALSE ),
+	m_aiX				( 0 ),
+	m_aiY				( 0 ),
+	m_btDifficulty		( 0 )
+{
+	ZeroMemory( m_apUser, sizeof( m_apUser ) );
+	ZeroMemory( m_aStone, sizeof( m_aStone ) );
+	ZeroMemory( m_abtUserState, sizeof( m_abtUserState ) );
+}
+
+
+CProductOmokServer::~CProductOmokServer()
+{
+}
+
+BOOL CProductOmokServer::Create( CProductManagerServer* pManager, IProductType* pType )
+{
+
+	return CProductServer::Create( pManager, pType );
+}
+
+BOOL CProductOmokServer::Update( DWORD dwSecond, IBrickWorld* pWorld )
+{	//	오목의 업데이트
+	//	게임이 진행중이지 않으면 업데이트 할 내용이 없습니다
+	//	게임 중간에 누군가 접속이 끊겼는지 확인해줍니다.
+	//	누군가 접속이 끊겼다면 남아있는 사람이 승리하도록 합니다.
+	//	제한 시간을 계산해야 합니다
+	//	제한시간이 다 지나갔다면 턴을 진행중이지 않은 유저가 승리합니다
+	//	AI 모드에서는 AI의 업데이트도 해줘야 합니다.
+
+	if( !CProductServer::Update( dwSecond, pWorld ) )
+	{
+		return FALSE;
+	}
+
+	if( m_btGameState != OMOK_STATE_RUN )
+	{	//	게임이 진행중이지 않음
+		return TRUE;
+	}
+
+	//	플레이어가 나갔는지 확인
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{	//	남아있는 유저가 승리하도록 해야 함
+		if( NULL == m_apUser[i] )
+		{	//	이 플레이어가 나갔습니다
+			//	패배
+			if( i != 1 || !m_bAIPlay )
+			{
+				OnEscape();	//	유저가 나갔을 때의 처리
+				m_abtUserState[i] = OMOK_USER_NONE;
+				return TRUE;
+			}
+		}
+	}
+
+	m_dwElapsedTime += dwSecond;
+	if( m_dwElapsedTime > m_dwLimitTime )
+	{	//	제한 시간 끝
+		OnTimeout();	//	승리등 처리는 함수 안에서 알아서 할 것
+	}
+
+	if( m_bAIPlay )
+	{	//	AI 처리
+		UpdateAI();
+	}
+
+	return TRUE;
+} // CProductOmokServer::Update
+
+BOOL CProductOmokServer::OnEventUse( CServerUser* pUser )
+{	//	유저가 프로덕트를 사용하려고 합니다
+	//	게임이 진행중이면 접속할 수 없습니다
+	//	유저가 이미 두명 접속중이라면 사용할 수 없습니다
+	//	0번 유저가 비어있다면 사용하려는 유저를 넣고 방장으로 합니다
+	//	0번 외의 자리가 비어있다면 사용하려는 유저를 넣습니다 -> 방장이 되지 않습니다
+	//	1번 자리에 사람이 들어가면 ai 모드를 비활성화 합니다
+	//	유저가 접속에 성공하면 해당 유저와 같은 인덱스의 유저 상태는 초기화 하도록 합니다
+	//	접속되어있는 유저들에게 게임 옵션을 보내줍니다 ( 유저가 접속하면서 바뀐 옵션이 있을 수 있으니)
+	//	접속되어있는 유저들에게 유저 목록을 새로 보내줘야 합니다
+
+	if( pUser == NULL )	return FALSE;
+
+	//	게임이 진행중이면
+	if( m_btGameState == OMOK_STATE_RUN )	return FALSE;
+	
+	//	빈자리를 찾습니다
+	BOOL result = FALSE;
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( NULL == m_apUser[i] )
+		{	//	빈자리입니다
+			result = TRUE;
+			m_apUser[i] = pUser;
+			pUser->m_pUseObject = this;
+			BYTE isHost = FALSE;
+			if( i == 0 )
+			{	//	0번인덱스면 방장이 됩니다
+				isHost = TRUE;
+			}
+			else
+			{	//	1번 인덱스에 유저가 들어오면 AI모드를 비활성화
+				m_bAIPlay = FALSE;
+			}
+
+			IPacketWriter* pWrite = pUser->GetSendPacket();
+			pWrite->BeginWrite( ISLET_PACKET_START_OMOK );
+			pWrite->WriteInt( GetID() );
+			pWrite->WriteByte( isHost );
+			pWrite->WriteInt64( pUser->GetUID() );
+			pWrite->EndWrite();	
+			m_abtUserState[i] = OMOK_USER_WAIT;
+			break;
+		}
+	}
+
+	//	빈자리가 없습니다
+	if( !result )	return FALSE;
+
+	//	접속중인 유저들에게 갱신된 유저 목록을 보내줍니다
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		SendUserList( m_apUser[i] );
+		SendGameOption( m_apUser[i] );	//	옵션이 변경될 수 있으므로 모두에게 보냅니다
+	}
+	return TRUE;
+}
+
+BOOL CProductOmokServer::OnEventStop( CServerUser* pUser )
+{	//	사용중이던 유저가 나갔습니다
+	//	게임 진행중에 나간 것이라면 남아있는 사람이 승리하도록 합니다
+	//	유저 목록이 바뀌었으니 유저 목록도 보냅니다
+	if( pUser == NULL )		return FALSE;
+
+	pUser->m_pUseObject = NULL;
+
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( m_apUser[i] == pUser )
+		{
+			m_apUser[i] = NULL;
+			m_abtUserState[i] = OMOK_USER_NONE;
+		}
+	}
+
+	if( m_btGameState == OMOK_STATE_RUN )
+	{	//	게임이 진행중이었다면
+		OnEscape();
+	}
+	else if( m_btGameState == OMOK_STATE_READY )
+	{
+		SetGameState( OMOK_STATE_WAIT );
+	}
+
+	SendUserListToAll();
+
+	return TRUE;
+}
+
+BOOL CProductOmokServer::OnEventRemove( CServerUser* pUser, BOOL bSendSubGiftBox )
+{	//	프로덕트가 제거되었습니다.
+	//	유저들이 사용중이던 오목을 강제로 종료시킵니다.
+	//	게임의 상태는 초기화합니다.
+	m_btGameState = OMOK_STATE_WAIT;
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( m_apUser[i] )
+		{
+			OnEventStop( m_apUser[i] );
+		}
+	}
+	return CProductServer::OnEventRemove( pUser, bSendSubGiftBox );
+}
+
+void CProductOmokServer::SendSetStone( BYTE color, int x, int y )
+{	//	돌을 놓은 정보를 보냅니다
+	//	접속중인 모든 유저에게 보냅니다
+
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		CServerUser* pUser = m_apUser[i];
+		if( NULL == pUser )	continue;
+
+		IPacketWriter* pWrite = pUser->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_SET_STONE );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteByte( PackCoordData( x, y ) );
+		pWrite->WriteByte( color );
+		pWrite->WriteByte( FALSE );
+		pWrite->EndWrite();
+	}
+}
+
+void CProductOmokServer::BroadcastSetStone( BYTE color, int x, int y )
+{	//	돌을 놓은 정보를 브로드캐스트 합니다
+	IPacketWriter* pWrite = m_pManager->GetServer()->GetWritePacket();
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_SET_STONE );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( PackCoordData( x, y ) );
+	pWrite->WriteByte( color );
+	pWrite->WriteByte( TRUE );
+	pWrite->EndWrite();
+
+	m_pManager->GetServer()->BroadCastingPacket( pWrite );
+}
+
+void CProductOmokServer::SendGameOption( CServerUser* pUser )
+{	//	해당 유저에게 게임 옵션 정보를 보냅니다
+	//	마지막 수 표시 옵션에 대한 정보를 보냅니다
+	//	ai 모드에 대한 정보를 보냅니다
+	//	기존의 패킷 구조에 맞춘 함수
+	if( NULL == pUser )	return;
+	IPacketWriter* pWrite = pUser->GetSendPacket();
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_SHOW_LAST );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( m_bShowLastMove );
+	pWrite->EndWrite();
+
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_AI_GAME );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( m_bAIPlay );
+	pWrite->EndWrite();
+}
+
+void CProductOmokServer::SendGameOption2( CServerUser* pUser )
+{	//	해당 유저에게 게임 옵션 정보를 보냅니다
+	//	마지막 수 표시 옵션과 AI모드 옵션을 보냅니다
+	//	두 옵션 모두 on/off로 표시할 수 있으니 byte 하나에 비트플래그로 묶어서 보내도록 합니다
+	//	
+	if( NULL == pUser )	return;
+
+	return;	//	사용하지 않는 함수입니다
+	/*
+	BYTE option = 0;
+	BYTE shiftAI = m_bAIPlay << 1;
+	option = m_bShowLastMove | shiftAI;
+
+	IPacketWriter* pWrite = pUser->GetSendPacket();
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_SHOW_LAST );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( option );
+	pWrite->EndWrite();
+	*/
+}
+
+void CProductOmokServer::SendUserListToAll()
+{	//	접속중인 모든 유저에게 유저 리스트롤 보냅니다
+
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+		SendUserList( m_apUser[i] );
+	}
+}
+
+void CProductOmokServer::SendUserList( CServerUser* pUser )
+{	//	해당 유저에게 오목에 접속중인 유저 리스트를 보냅니다
+	//	유저리스트에는 유저의 닉네임, ID, 상태를 보내도록 한다.
+	if( NULL == pUser )	return;
+	IPacketWriter* pWrite = pUser->GetSendPacket();
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_USER_LIST );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( BOARD_GAME_OMOK_PLAYER_COUNT );	//	최대 유저수를 보내고 빈자리는 공백을 보낸다
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( NULL == m_apUser[i] )
+		{	//	빈자리
+			//	공백 데이터를 보내도록 한다
+			pWrite->WriteStringW( L" " );
+			pWrite->WriteInt64( -2 );
+			pWrite->WriteByte( OMOK_USER_NONE );
+
+			continue;
+		}
+		CServerUser* user = m_apUser[i];
+		pWrite->WriteStringW( user->GetCharacterName() );
+		pWrite->WriteInt64( user->GetUID() );
+		pWrite->WriteByte( m_abtUserState[i] );
+	}
+	pWrite->EndWrite();
+}
+
+void CProductOmokServer::OnRecvUserReady( CServerUser* pUser )
+{	//	유저가 준비 버튼을 눌렀습니다.	유저의 준비 상태를 변경합니다
+	//	접속중인 유저가 아니면 안됩니다
+	//	해당 유저에 맞는 인덱스의 유저 상태를 변경합니다
+	//	준비중이었다면 준비 취소로, 준비중이 아니었다면 준비중으로 변경합니다.
+	//	접속중인 두명의 유저가 준비상태가 되면 게임상태를 준비상태로 바꿉니다.
+	//	변경된 결과를 접속중인 유저들에게 보내줍니다
+	if( NULL == pUser )	return;
+	int index = FindUserIndex( pUser );
+	if( index < 0 )	return;
+
+	if( m_abtUserState[index] == OMOK_USER_READY )
+	{
+		m_abtUserState[index] = OMOK_USER_WAIT;
+	}
+	else if( m_abtUserState[index] == OMOK_USER_WAIT )
+	{
+		m_abtUserState[index] = OMOK_USER_READY;
+	}
+
+	int ready = 0; 
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+		if( m_abtUserState[i] != OMOK_USER_READY )	continue;
+		ready++;
+	}
+
+	if( ready >= 2 )
+	{
+		SetGameState( OMOK_STATE_READY );
+	}
+	else
+	{
+		if( m_btGameState == OMOK_STATE_READY )
+		{
+			SetGameState( OMOK_STATE_WAIT );
+		}
+	}
+
+	//	결과를 보냅니다
+	SendUserState( FindUserIndex( pUser ) );
+}
+
+void CProductOmokServer::OnRecvSetStone( CServerUser* pUser, BYTE coord )
+{	//	유저가 돌을 배치합니다
+	//	해당 유저에게 해당하는 색의 돌을 배치합니다
+
+	BYTE color = FindUserIndex( pUser ) + 1;
+	int x, y;
+	UnpackCoordData( coord, x, y );
+	OnRecvSetStone( color, x, y );
+}
+
+void CProductOmokServer::OnRecvSetStone( BYTE color, int x, int y )
+{	//	해당하는 위치에 돌을 배치합니다
+	//	게임판 위의 올바른 위치에 배치해야 합니다
+	//	빈칸이 아닌 곳이 배치하려고 한 경우, 게임이 시작되지 않았다면 해당 돌을 지웁니다
+	//	게임이 진행중인 상태라면 빈칸이 아닌 곳에 놓을 수 없습니다
+	//	게임 진행중이면 돌을 놓은 후에 오목 완성을 계산해야 합니다
+	//	돌을 놓은 정보를 연결된 유저들에게 알려주여야 합니다
+	//	돌을 놓은 정보를 브로드캐스트 해야 합니다
+	
+	x = MAX( 0, MIN( BOARD_GAME_OMOK_SIZE - 1, x ) );
+	y = MAX( 0, MIN( BOARD_GAME_OMOK_SIZE - 1, y ) );
+
+	if( m_aStone[x][y] )
+	{	//	빈칸이 아닐 때
+		if( m_btGameState == OMOK_STATE_RUN )
+		{	//	게임중이면 놓을 수 없습니다
+			return;
+		}
+
+		//	게임중이 아니라면 돌을 지웁니다
+		m_aStone[x][y] = OMOK_STONE_NONE;
+	}
+	else
+	{	//	빈칸인 경우
+		//	돌을 놓습니다
+		m_aStone[x][y] = color;
+	}
+
+	SendSetStone( m_aStone[x][y], x, y );
+	BroadcastSetStone( m_aStone[x][y], x, y );
+
+	if( m_btGameState != OMOK_STATE_RUN )	return;
+	
+	//	게임 종료를 확인합니다
+	BOOL result = CheckCompletedFive( x, y );
+	if( result )
+	{
+		OnMadeFive( m_apUser[color - 1] );
+		return;
+	}
+	
+	//	남은 빈칸이 있는지
+	result = CheckRemainEmpty();
+	if( result )	return;
+
+	//	빈칸이 없음
+	OnDraw();
+}
+
+BOOL CProductOmokServer::IsHost( CServerUser* pUser )
+{	//	해당 유저가 방장인지 확인합니다
+	//	유저 인덱스 0번에 해당하면 방장입니다
+	int index = FindUserIndex( pUser );
+	if( index == 0 )
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CProductOmokServer::StartGame()
+{	//	게임을 시작합니다.
+	//	게임판의 돌을 모두 지웁니다.
+	//	게임의 상태를 진행중으로 바꿉니다.
+	//	0번 플레이어가 먼저 턴을 진행하도록 합니다
+	m_dwElapsedTime = 0;
+	m_btElapsedTurn = 0;
+	m_dwLimitTime = OMOK_TIME_START;
+
+	ClearBoard();
+	SetGameState( OMOK_STATE_RUN );
+	SetUserState( 0, OMOK_USER_TURN );
+	SetUserState( 1, OMOK_USER_RUN );
+}
+
+void CProductOmokServer::DoNextTurn( CServerUser* pUser )
+{	//	해당 유저의 턴이 끝났습니다.
+	//	해당 유저가 턴이 아니었다면 처리하지 않습니다.
+	//	해당 유저는 대기 상태가 됩니다.
+	//	다음 유저가 턴 상태가 됩니다.
+	//	턴이 넘어갈 때의 처리도 합니다.
+	//	턴 진행 횟수에 따라 제한시간이 증가해야합니다
+	//	턴 누적 시간을 초기화합니다
+
+	int index = -1;
+	if( NULL == pUser )
+	{	//	user가 없을 때, ai모드인지 확인,
+		//	0번 유저가 존재하고,
+		//	1번 유저가 없으며,
+		//	ai모드가 켜져있으면
+		//	1번 유저는 ai일 것
+		if( m_bAIPlay && m_apUser[0] )
+		{
+			index = 1;
+		}
+	}
+	else
+	{
+		index = FindUserIndex( pUser );
+	}
+	
+	if( index < 0 )	return;
+	if( m_abtUserState[index] != OMOK_USER_TURN )	return;
+
+	//	이번 유저의 상태는 turn -> run 으로 바꿉니다
+	m_abtUserState[index] = OMOK_USER_RUN;
+	SendUserState( index );
+
+	//	다음 유저의 상태를 turn으로 바꿉니다
+	int next = 1 - index;	//	총 유저가 두명이므로..
+	m_abtUserState[next] = OMOK_USER_TURN;
+	SendUserState( next );
+
+	//	제한시간에 관련된 처리를 합니다
+	//	누적 시간을 초기화 합니다
+	m_dwElapsedTime = 0;
+	//	턴 진행 횟수를 누적합니다
+	m_btElapsedTurn++;
+	//	턴이 정해진 횟수만큼 누적되면 제한시간을 증가시킵니다.
+	if( m_btElapsedTurn >= OMOK_TIME_TURN )
+	{
+		m_dwLimitTime += OMOK_TIME_ADD;
+		if( m_dwLimitTime > OMOK_TIME_MAX )
+		{
+			m_dwLimitTime = OMOK_TIME_MAX;
+		}
+		m_btElapsedTurn = 0;
+	}
+}
+
+void CProductOmokServer::SetShowLastMoveOption( BYTE option )
+{	//	마지막 수 표시 옵션의 값을 설정합니다
+	//	변경된 내용을 연결된 유저들에게 보내줍니다
+	m_bShowLastMove = option;
+	SendShowLastMoveOption();
+}
+
+void CProductOmokServer::ToggleShowLastMoveOption()
+{
+	m_bShowLastMove = !m_bShowLastMove;
+	SendShowLastMoveOption();
+}
+
+void CProductOmokServer::SetAIModeOption( BYTE option )
+{	//	인공지능 모드 옵션을 설정합니다
+	//	인덱스 1번 플레이어가 존재하면 AI모드를 활성화 할 수 없습니다
+	//	변경된 내용을 연결된 유저들에게 보내줍니다
+
+	if( m_apUser[1] )	m_bAIPlay = FALSE;
+	else				m_bAIPlay = option;
+	SendAIModeOption();
+}
+
+void CProductOmokServer::ToggleAIModeOption()
+{
+	if( m_apUser[1] )	m_bAIPlay = FALSE;
+	else				m_bAIPlay = !m_bAIPlay;
+	SendAIModeOption();
+}
+
+void CProductOmokServer::SetAIDifficulty( BYTE difficulty )
+{
+	m_btDifficulty = difficulty;
+}
+
+int CProductOmokServer::FindUserIndex( CServerUser* pUser )
+{	//	해당 유저와 맞는 인덱스 번호를 찾아서 반환합니다
+	//	탐색에 실패한 경우엔 -1을 반환하도록 합니다.
+	if( NULL == pUser )	return -1;
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( m_apUser[i] == pUser )
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void CProductOmokServer::SetGameState( BYTE state )
+{	//	게임의 상태를 설정합니다
+	//	게임 상태 목록에 맞는 상태로 설정해야합니다.
+	//	설정된 상태를 접속중인 유저들에게 보냅니다.
+	if( state < 0 || state >= OMOK_STATE_MAX )	return;
+
+	m_btGameState = state;
+	SendGameState();
+}
+
+void CProductOmokServer::SetUserState( int index, BYTE state )
+{	//	해당하는 인덱스의 유저 상태를 설정합니다
+	//	유저 상태 목록에 맞는 상태로 설정해야합니다
+	//	설정된 상태를 접속중인 유저들에게 보냅니다
+	
+	if( state < 0 || state >= OMOK_USER_STATE_MAX )	return;
+
+	m_abtUserState[index] = state;
+	SendUserState( index );
+}
+
+void CProductOmokServer::SetUserState( CServerUser* pUser, BYTE state )
+{	//	해당하는 유저의 상태를 설정합니다
+	//	유저에게 맞는 인덱스를 찾아서 상태를 설정하도록 합니다
+	int index = FindUserIndex( pUser );
+	SetUserState( index, state );
+}
+
+const int gDir[4][2] = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { 1, -1 } };
+
+BOOL CProductOmokServer::CheckCompletedFive( int x, int y )
+{	//	오목이 완성되었는지 확인
+	//	
+	
+	if( x < 0 || x > BOARD_GAME_OMOK_SIZE )	return FALSE;
+	if( y < 0 || y > BOARD_GAME_OMOK_SIZE ) return FALSE;
+
+	BYTE color = m_aStone[x][y];
+
+	for( int i = 0; i < 4; i++ )
+	{
+		int count = 1;
+		const int* dir = gDir[i];
+		int xx = x;
+		int yy = y;
+		for( int k = 1; k < 5; k++ )
+		{
+			xx += dir[0];
+			yy += dir[1];
+
+			if( xx < 0 || xx >= BOARD_GAME_OMOK_SIZE )	break;
+			if( yy < 0 || yy >= BOARD_GAME_OMOK_SIZE )	break;
+
+			if( m_aStone[xx][yy] != color )	break;
+
+			count++;
+			if( count >= 5 )	return TRUE;
+		}
+
+		xx = x;
+		yy = y;
+		for( int k = 1; k < 5; k++ )
+		{
+			xx -= dir[0];
+			yy -= dir[1];
+
+			if( xx < 0 || xx >= BOARD_GAME_OMOK_SIZE )	break;
+			if( yy < 0 || yy >= BOARD_GAME_OMOK_SIZE )	break;
+
+			if( m_aStone[xx][yy] != color )	break;
+
+			count++;
+			if( count >= 5 )	return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+BOOL CProductOmokServer::CheckRemainEmpty()
+{	//	돌을 놓을 수 있는 빈칸이 남아있는지 확인합니다.
+	//	더 이상 돌을 놓을 수 있는 자리가 없다면 FALSE를 반환합니다
+	
+	for( int x = 0; x < BOARD_GAME_OMOK_SIZE; x++ )
+	{
+		for( int y = 0; y < BOARD_GAME_OMOK_SIZE; y++ )
+		{	
+			if( m_aStone[x][y] == OMOK_STONE_NONE )		return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void CProductOmokServer::SendGameResult( CServerUser* pWinner, BOOL isDraw )
+{	//	게임이 끝난 결과를 보냅니다
+	//	접속중인 모두에게 보냅니다
+	//	승자가 있을 경우엔 승자의 id를 보냅니다
+	//	비긴경우엔 승자의 id에 -1을 보냅니다
+	//	AI가 승리한 경우엔 AI의 id가 없으므로 -2를 보냅니다
+	//	개인마을이면 브로드캐스트 합니다
+	__int64 id = -2;
+	if( NULL == pWinner )
+	{
+		if( isDraw )
+		{
+			id = -1;
+		}
+	}
+	else
+	{
+		id = pWinner->GetUID();
+	}
+
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( NULL == m_apUser[i] )	continue;
+		
+		IPacketWriter* pWrite = m_apUser[i]->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_WINNER );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteInt64( id );
+		pWrite->EndWrite();
+	}
+	
+	//	유저가 승자일 때
+	//	개인마을이라면
+	//	브로드캐스트 합니다.
+	if( NULL == pWinner )	return;
+	if( !m_pManager->GetServer()->IsPrivateServer() )	return;
+
+	BroadcastResult( pWinner->GetCharacterName() );
+}
+
+//	누군가 나가서 끝났을 때
+void CProductOmokServer::OnEscape()
+{	//	게임중 누군가가 나갔습니다.	남아있는 사람이 있다면 그 사람이 승리합니다.
+	//	남아있는 사람을 확인합니다.
+	//	남아있는 사람이 있다면 해당 유저가 이긴것으로 합니다.
+
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{//	남아있는 사람 찾기
+		if( NULL == m_apUser[i] )	continue;
+
+		//	남아있다면 승리자가 된다
+		SendGameResult( m_apUser[i] );
+	}
+	GameEnded();
+}
+
+//	시간이 다되서 끝났을 때
+void CProductOmokServer::OnTimeout()
+{	//	턴을 진행중이던 유저가 패배 = 턴을 기다리던 유저가 승리한다
+	//	유저의 상태를 확인하고 게임중 대기상태라면 승리하도록 한다
+
+	for( int i = 0 ; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( m_abtUserState[i] == OMOK_USER_RUN )
+		{	//	게임 진행 중, 대기상태
+			//	승자입니다
+			SendGameResult( m_apUser[i] );
+			break;
+		}
+	}
+	GameEnded();
+}
+
+//	오목을 완성해서 끝났을 때
+void CProductOmokServer::OnMadeFive( CServerUser* pUser )
+{	//	해당 유저가 오목을 완성했습니다. 해당 유저가 승리했습니다
+	SendGameResult( pUser );
+	GameEnded();
+}
+
+//	비겼을 때
+void CProductOmokServer::OnDraw()
+{	//	비겼습니다.	게임 결과의 우승자롤 -1로 보냅니다
+	SendGameResult( NULL, TRUE );
+	GameEnded();
+}
+
+void CProductOmokServer::BroadcastResult( const wchar_t* name )
+{	//	결과를 브로드캐스트 합니다
+	//	승자의 이름만 보내면 됩니다
+	
+	if( name[0] == NULL )	return;
+
+	IPacketWriter* pWrite = m_pManager->GetServer()->GetWritePacket();
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_BROADCAST_WINNER );
+	pWrite->WriteStringW( name );
+	pWrite->EndWrite();
+
+	m_pManager->GetServer()->BroadCastingPacket( pWrite );
+}
+
+void CProductOmokServer::ClearBoard()
+{	//	게임판의 돌들을 모두 지웁니다
+	//	저장 값을 모두 0으로 만들면 됩니다
+	//	게임판의 전체 상태를 보냅니다
+
+	ZeroMemory( m_aStone, sizeof( m_aStone ) );
+	//SendGameBoardData();
+	SendClearBoard();
+}
+
+void CProductOmokServer::SendShowLastMoveOption()
+{	//	마지막 수 표시 옵션의 설정값을 보냅니다
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+
+		IPacketWriter* pWrite = m_apUser[i]->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_SHOW_LAST );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteByte( m_bShowLastMove );
+		pWrite->EndWrite();
+	}
+}
+
+void CProductOmokServer::SendAIModeOption()
+{	//	AI모드의 설정값을 보냅니다
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] ) continue;
+
+		IPacketWriter* pWrite = m_apUser[i]->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_AI_GAME );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteByte( m_bAIPlay );
+		pWrite->EndWrite();
+	}
+
+	if( m_bAIPlay )
+	{
+		SetGameState( OMOK_STATE_READY );
+	}
+	else
+	{
+		SetGameState( OMOK_STATE_WAIT );
+	}
+}
+
+void CProductOmokServer::SendGameState()
+{	//	게임의 상태를 보냅니다
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+
+		IPacketWriter* pWrite = m_apUser[i]->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_GAME_STATE );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteByte( m_btGameState );
+		pWrite->EndWrite();
+	}
+}
+
+void CProductOmokServer::SendUserState( int index )
+{	//	해당 인덱스의 유저 상태를 보냅니다
+	if( NULL == m_apUser[index] )	return;
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+
+		IPacketWriter* pWrite = m_apUser[i]->GetSendPacket();
+		pWrite->BeginWrite( ISLET_PACKET_OMOK_USER_STATE );
+		pWrite->WriteInt( GetID() );
+		pWrite->WriteInt64( m_apUser[index]->GetUID() );
+		pWrite->WriteByte( m_abtUserState[index] );
+		pWrite->EndWrite();
+	}
+}
+
+void CProductOmokServer::SendGameBoardData()
+{	//	게임판의 정보를 보냅니다
+	//	*ClearBoard에서 호출한 함수입니다
+	//	일단 SendClearBoard로 이관...
+
+}
+
+void CProductOmokServer::SendClearBoard()
+{
+	IBrickServer* pServer = m_pManager->GetServer();
+	if( NULL == pServer )	return;
+
+	IPacketWriter* pWrite = pServer->GetWritePacket();
+
+	pWrite->BeginWrite( ISLET_PACKET_OMOK_GAME_STATE );
+	pWrite->WriteInt( GetID() );
+	pWrite->WriteByte( OMOK_STATE_CLEAR );
+	pWrite->EndWrite();
+
+	pServer->BroadCastingPacket( pWrite );
+}
+
+BYTE CProductOmokServer::PackCoordData( int x, int y )
+{	//	좌표 정보를 BYTE 하나에 합쳐서 저장합니다
+	//	각 좌표값은 0 ~ 14(오목판 크기) 사이의 값이어야합니다	
+	//	앞쪽 4비트에 y 좌표를, 뒤쪽 4비트에 x 좌표를 저장하도록 합니다
+
+	BYTE coord = 0;
+	x = MAX( 0, MIN( BOARD_GAME_OMOK_SIZE - 1, x ) );
+	y = MAX( 0, MIN( BOARD_GAME_OMOK_SIZE - 1, y ) );
+
+	BYTE xx = x;
+	BYTE yy = y << 4;
+	coord = xx | yy;
+	return coord;
+}
+
+void CProductOmokServer::UnpackCoordData( BYTE coord, int& x, int& y )
+{	//	BYTE 를 x, y 에 나눠서 저장합니다
+	//	BYTE의 앞쪽 4비트가 y좌표, 뒤쪽 4비트가 x좌표입니다
+
+	x = coord & BIT_FLAG_COORD_X;
+	y = ( coord & BIT_FLAG_COORD_Y ) >> 4;
+}
+
+BOOL CProductOmokServer::WritePacketData( IPacketWriter* pPacket ) const
+{	//	게임판 정보를 작성합니다
+	//	각 돌의 수량과 좌표정보를 작성하도록록 합니다
+	//	흰돌의 수량, 흰돌의 좌표배열, 검은돌의 수량, 검은돌의 좌표배열 을 작성합니다
+	//	모든 정보는 BYTE로 저장합니다
+	//	게임판을 순회하여 보낼 정보를 먼저 구하도록 합니다
+
+	if( !CProductServer::WritePacketData( pPacket ) )
+	{
+		return FALSE;
+	}
+
+	BYTE countWhite = 0;
+	BYTE countBlack = 0;
+	BYTE aWhite[225];
+	BYTE aBlack[225];
+
+	//	작성할 데이터
+	for( int x = 0; x < BOARD_GAME_OMOK_SIZE; x++ )
+	{
+		const BYTE* pStone = m_aStone[x];
+		for( int y = 0; y < BOARD_GAME_OMOK_SIZE; y++ )
+		{
+			switch( pStone[y] )
+			{
+			case OMOK_STONE_NONE:
+				break;
+			case OMOK_STONE_WHITE:
+				aWhite[countWhite] = PackCoordData( x, y );
+				countWhite++;
+				break;
+			case OMOK_STONE_BLACK:
+				aBlack[countBlack] = PackCoordData( x, y );
+				countBlack++;
+				break;
+			}
+		}
+	}
+
+	pPacket->WriteByte( countWhite );
+	//if( countWhite > 0 )
+	{
+		pPacket->WriteData( aWhite, countWhite );
+	}
+
+	pPacket->WriteByte( countBlack );
+	//if( countBlack > 0 )
+	{
+		pPacket->WriteData( aBlack, countBlack );
+	}
+
+	return TRUE;
+}
+
+void CProductOmokServer::GameEnded()
+{	//	게임이 종료된 이후의 처리들을 진행합니다
+	//	게임의 상태를 대기상태로 바꿉니다
+	//	접속중인 플레이어들의 상태를 대기상태로 바꿉니다
+
+	SetGameState( OMOK_STATE_END );
+	SetGameState( OMOK_STATE_WAIT );
+	for( int i = 0; i < BOARD_GAME_OMOK_PLAYER_COUNT; i++ )
+	{
+		if( !m_apUser[i] )	continue;
+
+		SetUserState( i, OMOK_USER_WAIT );
+	}
+	SendAIModeOption();
+	SendShowLastMoveOption();
+}
+
+void CProductOmokServer::UpdateAI()
+{	//	AI의 차례를 플레이 합니다
+	//	AI는 정해진 규칙에 따라서 돌을 놓도록 합니다
+	//	
+
+	//	AI는 항상 index 1번의 플레이어인 것으로 합니다.
+	//	AI모드이며 AI의 턴이어야 합니다
+	if( !m_bAIPlay )								return;
+	if( m_abtUserState[1] != OMOK_USER_TURN )		return;
+
+	//	게임판의 상태를 확인해야 합니다.
+	//	Simulation?
+	//	다음 수를 놓을 위치를 찾습니다.
+	
+	if( m_btDifficulty == OMOK_DIFFI_HARD )
+	{	//	고급 난이도일 때,
+		//	결과를 저장하고 다음 수를 예측하여 평가함
+		SimulationHardAI();
+	}
+	else
+	{
+		SimulationAI();
+	}
+
+	//	결과에 따라서 다음 수를 놓도록 합니다
+	int aiX = m_aiX;
+	int aiY = m_aiY;
+	
+	//	
+	OnRecvSetStone( OMOK_STONE_BLACK, aiX, aiY );
+
+	//	턴을 종료합니다
+	DoNextTurn( NULL );
+}
+
+void CProductOmokServer::SimulationAI()
+{	//	AI가 다음 수를 놓을 위치를 찾도록 합니다.
+	//	게임 판의 현재 돌 위치들을 검사합니다
+	//	빈칸에만 돌을 놓을 수 있으므로 빈칸을 기준으로 점수를 계산합니다.
+	//	빈칸 주변의 돌 배치에 따라서 점수를 부여합니다.
+	//	점수가 가장 높은 칸의 좌표를 다음 수를 놓을 자리로 설정합니다.
+
+	int maxPoint = 0;
+	for( int x = 0; x < BOARD_GAME_OMOK_SIZE; x++ )
+	{
+		for( int y = 0; y < BOARD_GAME_OMOK_SIZE; y++ )
+		{	//	빈칸만 검사합니다
+			if( m_aStone[x][y] )	continue;
+
+			//	빈칸이면
+			//	주변 돌들을 확인해서 점수를 계산하도록 합니다
+			int point = 0;
+			point = CalculatePoint( x, y );
+			if( point > maxPoint )
+			{	//	점수가 가장 높은 칸이면
+				m_aiX = x;
+				m_aiY = y;
+				maxPoint = point;
+				if( point >= MY_FOUR )	return;	//	승리하는 수 이므로 더이상 검사 X
+			}
+		}
+	}
+}
+
+int CProductOmokServer::CalculatePoint( int x, int y, BYTE color )
+{	//	해당 칸의 점수를 계산하도록 합니다
+	//	일단 AI 기준으로만 생각합니다
+	//int p = Nw::random( 200 );
+	int p = 0;
+
+	for( int c = 1; c < 3; c++ )
+	{	//	각 색상을 기준으로 확인
+		//	1 = white  2 = black
+		for( int d = 0; d < 4; d++ )
+		{	//	맞은 편을 포함하는 4개의 방향을 기준으로 확인
+			int count = 0; //	같은 색상이 몇개나 연속해서 있는지
+			const int* dir = gDir[d];	// 방향
+			int xx = x;
+			int yy = y;
+			int blocked = 0;	//	막힘 수
+			for( int i = 0; i < 5; i++ )
+			{	//	각 방향의 5칸까지만 확인
+				xx += dir[0];
+				yy += dir[1];
+				if( xx < 0 || xx > BOARD_GAME_OMOK_SIZE - 1 || yy < 0 || yy > BOARD_GAME_OMOK_SIZE - 1 )
+				{	//	막힘
+					blocked++;
+					break;
+				}
+				BYTE stone = m_aStone[xx][yy];
+				if( stone == c )
+				{	//	검사중인 색상과 같은 색
+					count++;
+				}
+				else if( stone != OMOK_STONE_NONE )
+				{	//	다른 색
+					blocked++;
+					break;
+				}
+				else
+				{	//	빈칸
+					break;
+				}
+			}
+			xx = x;
+			yy = y;
+			for( int i = 0; i < 5; i++ )
+			{	//	각 방향의 5칸까지만 확인
+				xx -= dir[0];
+				yy -= dir[1];
+				if( xx < 0 || xx > BOARD_GAME_OMOK_SIZE - 1 || yy < 0 || yy > BOARD_GAME_OMOK_SIZE - 1 )
+				{	//	막힘
+					blocked++;
+					break;
+				}
+				BYTE stone = m_aStone[xx][yy];
+				if( stone == c )
+				{	//	검사중인 색상과 같은 색
+					count++;
+				}
+				else if( stone != OMOK_STONE_NONE )
+				{	//	다른 색
+					blocked++;
+					break;
+				}
+				else
+				{	//	빈칸
+					break;
+				}
+			}
+
+			if( count > 3 )	//	연속된 4개 돌
+			{
+				if( c == color )				p += MY_FOUR;	//	내 돌
+				else							p += ENEMY_FOUR;
+			}
+			else if( blocked > 1 )
+			{	//	양쪽이 막힌 것
+				//	점수 없음
+			}
+			else if( count == 3 )
+			{	//	연속된 3개 돌
+				if( blocked )
+				{	//	막힌
+					if( c == color )				p += MY_BLOCK_THREE;
+					else							p += ENEMY_BLOCK_THREE;
+				}
+				else
+				{	//	열린
+					if( c == color )				p += MY_OPEN_THREE;
+					else							p += ENEMY_OPEN_THREE;
+				}
+			}
+			else if( count == 2 )
+			{	//	연속된 2개 돌
+				 if( c == color )				p += MY_TWO;
+				 else							p += ENEMY_TWO;
+			}
+			else if( count == 1 )
+			{
+				if( c == color )				p += MY_ONE;
+				else							p += ENEMY_ONE;
+			}
+
+
+			if( p >= MY_FOUR )
+			{	//	승리한 수 이므로 더이상 볼 필요 없음.
+				return p;
+			}
+		}
+	}
+
+	if( m_btDifficulty == OMOK_DIFFI_EASY && p > 0 )
+	{
+		p += Nw::random( 150 );	//	실수 유발
+	}
+
+	return p;
+}
